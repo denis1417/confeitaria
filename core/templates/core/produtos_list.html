@@ -1,0 +1,107 @@
+{% extends 'core/base.html' %}
+{% block title %}Produtos - Confeitaria{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <!-- Cabeçalho com título e botão -->
+    <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-white shadow-sm border rounded flex-wrap">
+        <h2 class="h4 fw-bold text-primary mb-0">🍰 Produtos</h2>
+        <a href="{% url 'produtos_create' %}" class="btn btn-primary px-4 py-2 btn-hover-3d">+ Novo Produto</a>
+    </div>
+
+    <!-- Tabela de produtos -->
+    <div class="table-responsive shadow-sm">
+        <table class="table table-hover align-middle table-bordered text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Nome</th>
+                    <th>Quantidade</th>
+                    <th>Data de Fabricação</th>
+                    <th>Data de Validade</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in produtos %}
+                <tr class="{{ p.row_class }}">
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ p.nome }}</td>
+                    <td>{{ p.quantidade }}</td>
+                    <td>{{ p.data_fabricacao|date:"d/m/Y" }}</td>
+                    <td>{{ p.data_validade|date:"d/m/Y" }}</td>
+                    <td>
+                        {% if p.row_class == "produto-vencido" %}
+                            <span title="Produto vencido">❌ Vencido</span>
+                        {% elif p.row_class == "produto-hoje" %}
+                            <span title="Produto vence hoje">⚠️ Vence Hoje</span>
+                        {% elif p.row_class == "produto-proximo" %}
+                            <span title="Produto próximo do vencimento">⏳ Próximo</span>
+                        {% else %}
+                            <span>✅ Ok</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'produtos_edit' p.id %}" class="btn btn-sm btn-warning me-1 btn-hover-3d">Editar</a>
+                        <a href="{% url 'produtos_delete' p.id %}" class="btn btn-sm btn-danger btn-hover-3d">Deletar</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-muted py-4">Nenhum produto cadastrado ainda.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Estilos -->
+<style>
+/* Botões 3D */
+.btn-hover-3d {
+    font-size: 0.9rem;
+    padding: 0.45rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    transition: all 0.2s ease;
+}
+.btn-hover-3d:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Cores de validade */
+.produto-vencido {
+    background-color: #b71c1c !important; /* vermelho escuro */
+    color: #fff !important;
+    font-weight: bold;
+}
+.produto-hoje {
+    background-color: #e65100 !important; /* laranja escuro */
+    color: #fff !important;
+    font-weight: bold;
+}
+.produto-proximo {
+    background-color: #fff3cd !important; /* amarelo */
+    color: #856404 !important;
+    font-weight: bold;
+}
+
+/* Tooltip simples */
+td span[title] {
+    cursor: help;
+    text-decoration: underline dotted;
+}
+
+/* Responsividade - quebra de linha em telas pequenas */
+@media (max-width: 767px) {
+    .table-responsive table {
+        font-size: 0.9rem;
+    }
+}
+</style>
+{% endblock %}

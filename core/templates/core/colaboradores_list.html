@@ -1,0 +1,117 @@
+{% extends 'core/base.html' %}
+{% block title %}Colaboradores - Confeitaria{% endblock %}
+
+{% block content %}
+<!-- Cabeçalho + Busca -->
+<div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-white shadow-sm border rounded flex-wrap">
+    <div>
+        <h2 class="h4 fw-bold text-primary mb-1">👥 Colaboradores</h2>
+        <p class="mb-0 text-muted small">Gerenciamento de Colaboradores</p>
+    </div>
+
+    <div class="d-flex align-items-center me-3">
+        <input type="text" id="busca-colaborador" class="form-control form-control-sm" placeholder="Buscar por nome...">
+    </div>
+
+    <a href="{% url 'colaboradores_create' %}" class="btn btn-primary shadow-sm">
+        <i class="bi bi-person-plus"></i> Novo Colaborador
+    </a>
+</div>
+
+<!-- Tabela -->
+<div class="table-responsive shadow-sm">
+    <table class="table table-hover align-middle text-center" id="tabela-colaboradores">
+        <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>Foto</th>
+                <th>RC</th>
+                <th>Nome</th>
+                <th>Função</th>
+                <th>Sexo</th>
+                <th>CPF / RG</th>
+                <th>E-mail</th>
+                <th>Celular</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="tbody-colaboradores">
+            {% for c in colaboradores %}
+            <tr class="colaborador-row">
+                <td>{{ forloop.counter }}</td>
+                <td>
+                    {% if c.foto %}
+                        <img src="{{ c.foto.url }}" alt="{{ c.nome }}" class="rounded-circle" style="width:45px; height:45px; object-fit:cover;">
+                    {% else %}
+                        <i class="bi bi-person-circle text-muted" style="font-size:2rem;"></i>
+                    {% endif %}
+                </td>
+                <td>{{ c.rc }}</td>
+                <td class="fw-semibold colaborador-nome">{{ c.nome }}</td>
+                <td>{{ c.funcao }}</td>
+                <td>{{ c.sexo }}</td>
+                <td>{{ c.cpf_rg }}</td>
+                <td>{{ c.email }}</td>
+                <td>{{ c.celular }}</td>
+                <td>
+                    <a href="{% url 'colaboradores_edit' c.id %}" class="btn btn-sm btn-outline-warning me-1">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="{% url 'colaboradores_delete' c.id %}" class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="10" class="text-center text-muted py-4">
+                    Nenhum colaborador cadastrado ainda.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Mensagem de nenhum resultado encontrado -->
+    <p id="nenhum-resultado" class="text-center text-muted py-3" style="display:none;">
+        Nenhum colaborador encontrado.
+    </p>
+</div>
+
+<!-- Script de busca dinâmica -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const inputBusca = document.getElementById('busca-colaborador');
+    const linhas = document.querySelectorAll('#tabela-colaboradores .colaborador-row');
+    const msgNenhum = document.getElementById('nenhum-resultado');
+
+    inputBusca.addEventListener('keyup', function() {
+        const termo = this.value.toLowerCase();
+        let encontrou = false;
+
+        linhas.forEach(linha => {
+            const nome = linha.querySelector('.colaborador-nome').textContent.toLowerCase();
+            if (nome.includes(termo)) {
+                linha.style.display = '';
+                encontrou = true;
+            } else {
+                linha.style.display = 'none';
+            }
+        });
+
+        msgNenhum.style.display = encontrou ? 'none' : 'block';
+    });
+});
+</script>
+
+<!-- Estilos -->
+<style>
+
+@media (max-width: 767px) {
+    .table-responsive table {
+        font-size: 0.9rem;
+    }
+}
+</style>
+{% endblock %}
+
