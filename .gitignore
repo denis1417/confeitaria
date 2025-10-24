@@ -1,5 +1,28 @@
+# Virtualenv
 venv/
+
+# Python cache
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
+*.pdb
+
+# Django
+*.log
+*.pot
+*.py[cod]
+*.sqlite3
 db.sqlite3
+media/
+
+# Env variables
+.env
+
+# IDEs
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
